@@ -48,7 +48,7 @@ class OpenInterpreter:
         debug=False,
         max_output=2800,
         safe_mode="off",
-        shrink_images=False,
+        shrink_images=True,
         loop=False,
         loop_message="""Proceed. You CAN run code on my machine. If the entire task I asked for is done, say exactly 'The task is done.' If you need some specific information (like username or password) say EXACTLY 'Please provide more information.' If it's impossible, say 'The task is impossible.' (If I haven't provided a task, say exactly 'Let me know what you'd like to do next.') Otherwise keep going.""",
         loop_breakers=[
@@ -318,6 +318,7 @@ class OpenInterpreter:
             for chunk in respond(self):
                 # For async usage
                 if hasattr(self, "stop_event") and self.stop_event.is_set():
+                    print("Open Interpreter stopping.")
                     break
 
                 if chunk["content"] == "":
@@ -434,7 +435,10 @@ class OpenInterpreter:
 
     def display_message(self, markdown):
         # This is just handy for start_script in profiles.
-        display_markdown_message(markdown)
+        if self.plain_text_display:
+            print(markdown)
+        else:
+            display_markdown_message(markdown)
 
     def get_oi_dir(self):
         # Again, just handy for start_script in profiles.
